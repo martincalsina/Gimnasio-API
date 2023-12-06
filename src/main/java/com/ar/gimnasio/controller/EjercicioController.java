@@ -4,11 +4,13 @@
  */
 package com.ar.gimnasio.controller;
 
+import com.ar.gimnasio.domain.ejercicio.DatosBorradoEjercicio;
 import com.ar.gimnasio.domain.ejercicio.DatosListadoEjercicio;
 import com.ar.gimnasio.domain.ejercicio.DatosRegistroEjercicio;
 import com.ar.gimnasio.domain.ejercicio.DatosRespuestaEjercicio;
 import com.ar.gimnasio.domain.ejercicio.Ejercicio;
 import com.ar.gimnasio.domain.ejercicio.EjercicioRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +40,7 @@ public class EjercicioController {
     @Autowired
     private EjercicioRepository ejercicioRepository;
     
+    @Transactional
     @PostMapping
     public ResponseEntity<DatosRespuestaEjercicio> registrarEjercicio(@RequestBody @Valid DatosRegistroEjercicio datos, UriComponentsBuilder uriComponentsBuilder) {
         
@@ -62,6 +66,16 @@ public class EjercicioController {
         Ejercicio ejercicio = ejercicioRepository.getReferenceById(id);
         var datosEjercicio = new DatosRespuestaEjercicio(ejercicio);
         return ResponseEntity.ok(datosEjercicio);
+    }
+    
+    @DeleteMapping 
+    public ResponseEntity<DatosRespuestaEjercicio> eliminarEjercicioPorId(@RequestBody @Valid DatosBorradoEjercicio datos) {
+        
+        Ejercicio ejercicio = ejercicioRepository.getReferenceById(datos.id());
+        ejercicioRepository.delete(ejercicio);
+        var datosEjercicio = new DatosRespuestaEjercicio(ejercicio);
+        return ResponseEntity.ok(datosEjercicio);
+        
     }
     
 }

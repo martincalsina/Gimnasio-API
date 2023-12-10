@@ -13,5 +13,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PersonaRepository extends JpaRepository<Persona, Integer> {
+    
     boolean existsByCorreo(String correo);
+    
+    Persona findByCorreoAndPassword(String correo, String password);
+    
 }

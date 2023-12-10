@@ -5,6 +5,7 @@
 package com.ar.gimnasio.controller;
 
 import com.ar.gimnasio.domain.persona.DatosBuscarPersona;
+import com.ar.gimnasio.domain.persona.DatosLoginPersona;
 import com.ar.gimnasio.domain.persona.DatosRegistroPersona;
 import com.ar.gimnasio.domain.persona.DatosRespuestaPersona;
 import com.ar.gimnasio.domain.persona.DatosVerPersona;
@@ -13,6 +14,7 @@ import com.ar.gimnasio.domain.persona.PersonaRepository;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +63,26 @@ public class PersonaController {
     public ResponseEntity<Boolean> verificarDisponibilidadCorreo(@PathVariable String correo) {
         boolean disponible = !this.personaRepository.existsByCorreo(correo.toLowerCase());
         return ResponseEntity.ok(disponible);
+    }
+    
+    @GetMapping("/login")
+    public ResponseEntity<?> login(@RequestBody DatosLoginPersona datos) {
+        
+        String correo = datos.correo();
+        String password = datos.password();
+        
+        Persona persona = this.autenticar(correo, password);
+        
+        if (persona != null) {
+            return ResponseEntity.ok(persona);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+        }
+    }
+    
+    
+    public Persona autenticar(String correo, String password) {
+        return personaRepository.findByCorreoAndPassword(correo, password);
     }
     
 }

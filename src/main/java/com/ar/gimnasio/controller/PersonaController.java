@@ -15,6 +15,7 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,12 @@ public class PersonaController {
         DatosVerPersona dvp = new DatosVerPersona(persona);
         
         return ResponseEntity.ok(dvp);
+    }
+    
+    @GetMapping("/correoDisponible/{correo}")
+    public ResponseEntity<Boolean> verificarDisponibilidadCorreo(@PathVariable String correo) {
+        boolean disponible = !this.personaRepository.existsByCorreo(correo.toLowerCase());
+        return ResponseEntity.ok(disponible);
     }
     
 }

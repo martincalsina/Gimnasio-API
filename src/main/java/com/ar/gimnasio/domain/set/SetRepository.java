@@ -4,6 +4,7 @@
  */
 package com.ar.gimnasio.domain.set;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,7 @@ import org.springframework.stereotype.Repository;
 public interface SetRepository extends JpaRepository<Set, Integer> {
     
     Page<Set> findAll(Pageable paginacion);
+    
+    List<Set> findByEntrenamientoId(Integer entrenamientoId);
     
 }

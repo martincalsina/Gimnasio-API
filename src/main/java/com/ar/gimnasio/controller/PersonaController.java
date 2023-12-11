@@ -65,7 +65,7 @@ public class PersonaController {
         return ResponseEntity.ok(disponible);
     }
     
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody DatosLoginPersona datos) {
         
         String correo = datos.correo();
@@ -74,12 +74,13 @@ public class PersonaController {
         Persona persona = this.autenticar(correo, password);
         
         if (persona != null) {
-            return ResponseEntity.ok(persona);
+            DatosVerPersona dvp = new DatosVerPersona(persona);
+            return ResponseEntity.ok(dvp);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
         }
+        
     }
-    
     
     public Persona autenticar(String correo, String password) {
         return personaRepository.findByCorreoAndPassword(correo, password);

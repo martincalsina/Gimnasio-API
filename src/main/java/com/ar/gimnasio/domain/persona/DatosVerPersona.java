@@ -14,12 +14,12 @@ import java.util.List;
  */
 public record DatosVerPersona(
         @NotNull Integer persona_id,
+        @NotNull String correo,
         @NotNull String nombre,
-        @NotNull String apellido,
-        @NotNull List<Rutina> rutinas) {
+        @NotNull String apellido) {
     
     public DatosVerPersona(Persona p) {
-        this(p.getId(), p.getNombre(), p.getApellido(), p.getRutinas());
+        this(p.getId(), p.getCorreo(), p.getNombre(), p.getApellido());
     }
 
 }

@@ -76,7 +76,7 @@ public class RutinaController {
         
     }
     
-    @GetMapping("/ver/persona_id/{persona_id}")
+    @GetMapping("/listar/persona_id/{persona_id}")
     public ResponseEntity<List<DatosRutinaDeUsuario>> buscarRutinaPorIdPersona(@PathVariable Integer persona_id) {
         
         List<Rutina> rutinas = rutinaRepository.findByPersonaId(persona_id);

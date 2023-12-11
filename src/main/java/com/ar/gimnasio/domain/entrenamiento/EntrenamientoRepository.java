@@ -4,6 +4,7 @@
  */
 package com.ar.gimnasio.domain.entrenamiento;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntrenamientoRepository extends JpaRepository<Entrenamiento, Integer>{
+    
+    List<Entrenamiento> findByRutinaId(Integer rutinaId);
     
 }

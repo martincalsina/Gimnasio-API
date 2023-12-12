@@ -6,6 +6,7 @@ import com.ar.gimnasio.domain.entrenamiento.Entrenamiento;
 import com.ar.gimnasio.domain.repeticion.Repeticion;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -48,6 +49,7 @@ public class Set {
     private Integer peso;
     private Integer series;
     
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "ejercicio_id")
     private Ejercicio ejercicio;

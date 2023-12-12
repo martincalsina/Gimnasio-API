@@ -4,16 +4,27 @@
  */
 package com.ar.gimnasio.controller;
 
+import com.ar.gimnasio.domain.ejercicio.Ejercicio;
+import com.ar.gimnasio.domain.ejercicio.EjercicioRepository;
 import com.ar.gimnasio.domain.entrenamiento.DatosBuscarEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.DatosCargaEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.DatosEntrenamientoDeUsuario;
 import com.ar.gimnasio.domain.entrenamiento.DatosRegistroEntrenamiento;
+import com.ar.gimnasio.domain.entrenamiento.DatosRegistroEntrenamientoCompleto;
 import com.ar.gimnasio.domain.entrenamiento.DatosRespuestaEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.DatosVerEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.Entrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.EntrenamientoRepository;
+import com.ar.gimnasio.domain.repeticion.DatosCargaRepeticion;
+import com.ar.gimnasio.domain.repeticion.Repeticion;
+import com.ar.gimnasio.domain.repeticion.RepeticionesRepository;
 import com.ar.gimnasio.domain.rutina.Rutina;
 import com.ar.gimnasio.domain.rutina.RutinaRepository;
+import com.ar.gimnasio.domain.set.DatosCargaSet;
+import com.ar.gimnasio.domain.set.DatosRegistroSetCompleto;
+import com.ar.gimnasio.domain.set.DatosRegistroSetCompleto.RegistroRepeticiones;
+import com.ar.gimnasio.domain.set.Set;
+import com.ar.gimnasio.domain.set.SetRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -52,6 +63,12 @@ public class EntrenamientoController {
     private EntrenamientoRepository entrenamientoRepository;
     @Autowired
     private RutinaRepository rutinaRepository;
+    @Autowired
+    private RepeticionesRepository repeticionesRepository;
+    @Autowired
+    private EjercicioRepository ejercicioRepository;
+    @Autowired
+    private SetRepository setRepository;
     
     @Transactional
     @PostMapping("/crear")
@@ -71,6 +88,70 @@ public class EntrenamientoController {
         DatosRespuestaEntrenamiento dre = new DatosRespuestaEntrenamiento(entrenamiento);
         
         return ResponseEntity.ok(dre);
+    }
+    
+    @Transactional
+    @PostMapping("/crear/completo")
+    public ResponseEntity<DatosRespuestaEntrenamiento> registrarEntrenamiento(@RequestBody @Valid DatosRegistroEntrenamientoCompleto datos,
+            UriComponentsBuilder uriComponentsBuilder) {
+        
+        Rutina rutina = rutinaRepository.getReferenceById(datos.rutina_id());
+        
+        DatosCargaEntrenamiento dce = new DatosCargaEntrenamiento(datos.fecha(), rutina);
+        
+        Entrenamiento entrenamiento = new Entrenamiento(dce);
+        
+        entrenamiento = entrenamientoRepository.save(entrenamiento);
+        
+        System.out.println("LLEGUÉ A CREAR EL ENTRENAMIENTO");
+        
+        for (DatosRegistroSetCompleto drsc : datos.sets()) {
+            
+            Ejercicio ejercicioDeSet = ejercicioRepository.getReferenceById(drsc.ejercicio_id());
+            
+            DatosCargaSet dcs = new DatosCargaSet(
+                    drsc.peso(), 
+                    drsc.series(), 
+                    ejercicioDeSet,
+                    entrenamiento
+            );
+            
+            Set nuevoSet = new Set(dcs);
+            
+            nuevoSet = setRepository.save(nuevoSet);
+            
+            System.out.println("LLEGUÉ A CREAR UN SET");
+            
+            List<RegistroRepeticiones> listaRr = drsc.listaRepeticiones();
+            
+            for (RegistroRepeticiones datosRep: listaRr) {
+                
+                DatosCargaRepeticion dcr = new DatosCargaRepeticion(
+                        datosRep.cantidad(),
+                        datosRep.numero_serie(),
+                        nuevoSet
+                );
+                
+                Repeticion nuevaRepeticion = new Repeticion(dcr);
+                
+                nuevaRepeticion = repeticionesRepository.save(nuevaRepeticion);
+                
+                System.out.println("LLEGUÉ A CREAR UNA REPETICION");
+                
+                nuevoSet.getRepeticiones().add(nuevaRepeticion);
+                
+            }
+            
+            entrenamiento.getSets().add(nuevoSet);
+            
+        }
+        
+        rutina.getEntrenamientos().add(entrenamiento);
+        
+        DatosRespuestaEntrenamiento dre = new DatosRespuestaEntrenamiento(entrenamiento);
+        
+        return ResponseEntity.ok(dre);
+        
     }
     
     @GetMapping("/ver")

@@ -27,10 +27,14 @@ import com.ar.gimnasio.domain.set.Set;
 import com.ar.gimnasio.domain.set.SetRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -194,6 +198,17 @@ public class EntrenamientoController {
         }
         
         return ResponseEntity.ok(listaDedu);
+    }
+    
+    @DeleteMapping("/borrar/{entrenamiento_id}")
+    public ResponseEntity<Map<String, String>> borrarRutinaPorId(@PathVariable Integer entrenamiento_id) {
+              
+        entrenamientoRepository.deleteById(entrenamiento_id);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Entrenamiento " + entrenamiento_id.toString() + " borrado");
+        
+        return ResponseEntity.ok(response);
     }
     
     

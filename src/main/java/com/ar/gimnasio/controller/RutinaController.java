@@ -9,6 +9,8 @@ import com.ar.gimnasio.domain.persona.PersonaRepository;
 import com.ar.gimnasio.domain.rutina.DatosBuscarRutina;
 import com.ar.gimnasio.domain.rutina.DatosBuscarRutinaPorPersona;
 import com.ar.gimnasio.domain.rutina.DatosCargaRutina;
+import com.ar.gimnasio.domain.rutina.DatosEditarRutina;
+import com.ar.gimnasio.domain.rutina.DatosEditarRutinaRespuesta;
 import com.ar.gimnasio.domain.rutina.DatosRegistroRutina;
 import com.ar.gimnasio.domain.rutina.DatosRespuestaRutina;
 import com.ar.gimnasio.domain.rutina.DatosRutinaDeUsuario;
@@ -18,13 +20,16 @@ import com.ar.gimnasio.domain.rutina.RutinaRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,12 +99,30 @@ public class RutinaController {
         return ResponseEntity.ok(rutinasDvr);
     }
     
+    @PutMapping("/editar")
+    public ResponseEntity<DatosEditarRutinaRespuesta> editarRutina(@RequestBody @Valid DatosEditarRutina datos) {
+        
+        Rutina rutinaExistente = rutinaRepository.getReferenceById(datos.rutina_id());
+        
+        rutinaExistente.setNombre(datos.nombre());
+        
+        rutinaExistente = rutinaRepository.save(rutinaExistente);
+        
+        DatosEditarRutinaRespuesta derr = new DatosEditarRutinaRespuesta(rutinaExistente);
+        
+        return ResponseEntity.ok(derr); 
+        
+    }
+    
     @DeleteMapping("/borrar/{rutina_id}")
-    public ResponseEntity<?> borrarRutinaPorId(@PathVariable Integer rutina_id) {
+    public ResponseEntity<Map<String, String>> borrarRutinaPorId(@PathVariable Integer rutina_id) {
         
         rutinaRepository.deleteById(rutina_id);
         
-        return ResponseEntity.ok().body("Rutina borrada");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Rutina " + rutina_id.toString() + " borrada");
+        
+        return ResponseEntity.ok().body(response);
     }
     
 }

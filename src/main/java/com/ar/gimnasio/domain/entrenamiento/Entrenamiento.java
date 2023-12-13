@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
@@ -33,6 +34,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="entrenamiento")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -57,6 +59,12 @@ public class Entrenamiento {
         this.fecha = dce.fecha();
         this.rutina = dce.rutina();
         this.sets = new ArrayList<>();
+    }
+    
+    public Entrenamiento(Integer entrenamiento_id, DatosCargaEntrenamiento dce) {
+        this.id = entrenamiento_id;
+        this.fecha = dce.fecha();
+        this.rutina = dce.rutina();
     }
     
 }

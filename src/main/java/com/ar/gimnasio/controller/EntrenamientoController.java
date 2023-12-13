@@ -8,6 +8,7 @@ import com.ar.gimnasio.domain.ejercicio.Ejercicio;
 import com.ar.gimnasio.domain.ejercicio.EjercicioRepository;
 import com.ar.gimnasio.domain.entrenamiento.DatosBuscarEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.DatosCargaEntrenamiento;
+import com.ar.gimnasio.domain.entrenamiento.DatosEditarEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.DatosEntrenamientoDeUsuario;
 import com.ar.gimnasio.domain.entrenamiento.DatosRegistroEntrenamiento;
 import com.ar.gimnasio.domain.entrenamiento.DatosRegistroEntrenamientoCompleto;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -158,10 +160,10 @@ public class EntrenamientoController {
         
     }
     
-    @GetMapping("/ver")
-    public ResponseEntity<DatosVerEntrenamiento> buscarEntrenamientoPorId(@RequestBody @Valid DatosBuscarEntrenamiento datos) {
+    @GetMapping("/ver/{entrenamiento_id}")
+    public ResponseEntity<DatosVerEntrenamiento> buscarEntrenamientoPorId(@PathVariable Integer entrenamiento_id) {
         
-        Entrenamiento entrenamiento = entrenamientoRepository.getReferenceById(datos.id());
+        Entrenamiento entrenamiento = entrenamientoRepository.getReferenceById(entrenamiento_id);
         
         DatosVerEntrenamiento dve = new DatosVerEntrenamiento(entrenamiento);
         
@@ -198,6 +200,72 @@ public class EntrenamientoController {
         }
         
         return ResponseEntity.ok(listaDedu);
+    }
+    
+    @PutMapping("/editar")
+    public ResponseEntity<DatosRespuestaEntrenamiento> editarEntrenamiento(@RequestBody @Valid DatosEditarEntrenamiento datos) {
+   
+        //busco el entrenamiento existente
+        Entrenamiento entrenamientoExistente = entrenamientoRepository.getReferenceById(datos.entrenamiento_id());
+        
+        System.out.println("LLEGUÉ A EDITAR EL ENTRENAMIENTO");
+        
+        Rutina nuevaRutina = rutinaRepository.getReferenceById(datos.rutina_id());
+        
+        entrenamientoExistente.getSets().clear();
+        
+        entrenamientoExistente.setFecha(datos.fecha());
+        entrenamientoExistente.setRutina(nuevaRutina);
+        
+        
+        for (DatosRegistroSetCompleto drsc : datos.sets()) {
+            
+            Ejercicio ejercicioDeSet = ejercicioRepository.getReferenceById(drsc.ejercicio_id());
+            
+            DatosCargaSet dcs = new DatosCargaSet(
+                    drsc.peso(), 
+                    drsc.series(), 
+                    ejercicioDeSet,
+                    entrenamientoExistente
+            );
+            
+            Set nuevoSet = new Set(dcs);
+            
+            nuevoSet = setRepository.save(nuevoSet);
+            
+            System.out.println("LLEGUÉ A EDITAR UN SET");
+            
+            List<RegistroRepeticiones> listaRr = drsc.listaRepeticiones();
+            
+            for (RegistroRepeticiones datosRep: listaRr) {
+                
+                DatosCargaRepeticion dcr = new DatosCargaRepeticion(
+                        datosRep.cantidad(),
+                        datosRep.numero_serie(),
+                        nuevoSet
+                );
+                
+                Repeticion nuevaRepeticion = new Repeticion(dcr);
+                
+                nuevaRepeticion = repeticionesRepository.save(nuevaRepeticion);
+                
+                System.out.println("LLEGUÉ A EDITAR UNA REPETICION");
+                
+                nuevoSet.getRepeticiones().add(nuevaRepeticion);
+                
+            }
+            
+            entrenamientoExistente.getSets().add(nuevoSet);
+            
+        }
+        
+        entrenamientoExistente = entrenamientoRepository.save(entrenamientoExistente);
+        
+        nuevaRutina.getEntrenamientos().add(entrenamientoExistente);
+        
+        DatosRespuestaEntrenamiento dre = new DatosRespuestaEntrenamiento(entrenamientoExistente);
+        
+        return ResponseEntity.ok(dre);
     }
     
     @DeleteMapping("/borrar/{entrenamiento_id}")

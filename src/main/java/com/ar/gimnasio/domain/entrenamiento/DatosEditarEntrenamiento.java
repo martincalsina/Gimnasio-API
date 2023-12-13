@@ -4,7 +4,7 @@
  */
 package com.ar.gimnasio.domain.entrenamiento;
 
-import com.ar.gimnasio.domain.set.Set;
+import com.ar.gimnasio.domain.set.DatosRegistroSetCompleto;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,13 +13,10 @@ import java.util.List;
  *
  * @author marti
  */
-public record DatosVerEntrenamiento(
+public record DatosEditarEntrenamiento(
+        @NotNull Integer entrenamiento_id,
         @NotNull Integer rutina_id,
         @NotNull LocalDate fecha,
-        @NotNull List<Set> sets) {
-    
-    public DatosVerEntrenamiento(Entrenamiento e) {
-        this(e.getRutina().getId() ,e.getFecha(), e.getSets());
-    }
+        @NotNull List<DatosRegistroSetCompleto> sets) {
 
 }

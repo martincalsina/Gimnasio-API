@@ -15,8 +15,8 @@ import jakarta.validation.constraints.Size;
 public record DatosRegistroPersona(
         @NotBlank @Size(min = 0, max = 150) @Email String correo,
         @NotBlank @Size(min = 8, max = 150) String password,
-        @NotBlank @Size(min = 0, max = 150) String nombre,
-        @NotBlank @Size(min = 0, max = 150) String apellido
+        @NotBlank @Size(min = 0, max = 100) String nombre,
+        @NotBlank @Size(min = 0, max = 100) String apellido
         ) {
 
 }

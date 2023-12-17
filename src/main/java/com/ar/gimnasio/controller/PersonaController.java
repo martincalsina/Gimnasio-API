@@ -12,6 +12,7 @@ import com.ar.gimnasio.domain.persona.DatosVerPersona;
 import com.ar.gimnasio.domain.persona.Persona;
 import com.ar.gimnasio.domain.persona.PersonaRepository;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,10 +50,10 @@ public class PersonaController {
         return ResponseEntity.ok(drp);
     }
     
-    @GetMapping("/ver")
-    public ResponseEntity<DatosVerPersona> buscarPersonaPorId(@RequestBody @Valid DatosBuscarPersona datos) {
+    @GetMapping("/ver/{persona_id}")
+    public ResponseEntity<DatosVerPersona> buscarPersonaPorId(@PathVariable Integer persona_id) {
         
-        Persona persona = personaRepository.getReferenceById(datos.persona_id());
+        Persona persona = personaRepository.getReferenceById(persona_id);
         
         DatosVerPersona dvp = new DatosVerPersona(persona);
         

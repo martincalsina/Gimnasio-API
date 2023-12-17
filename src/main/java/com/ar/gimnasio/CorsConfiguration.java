@@ -18,7 +18,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200") //suponiendo que tuviera un frontend (uso Postman)...
+                .allowedOrigins("https://gimnasio-martin.web.app") //suponiendo que tuviera un frontend (uso Postman)...
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
     }
     

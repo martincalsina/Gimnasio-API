@@ -5,6 +5,7 @@
 package com.ar.gimnasio.controller;
 
 import com.ar.gimnasio.domain.persona.DatosBuscarPersona;
+import com.ar.gimnasio.domain.persona.DatosEditarPersona;
 import com.ar.gimnasio.domain.persona.DatosLoginPersona;
 import com.ar.gimnasio.domain.persona.DatosRegistroPersona;
 import com.ar.gimnasio.domain.persona.DatosRespuestaPersona;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +66,21 @@ public class PersonaController {
     public ResponseEntity<Boolean> verificarDisponibilidadCorreo(@PathVariable String correo) {
         boolean disponible = !this.personaRepository.existsByCorreo(correo.toLowerCase());
         return ResponseEntity.ok(disponible);
+    }
+    
+    @PutMapping("/editar")
+    public ResponseEntity<DatosVerPersona> editarPersona(@RequestBody @Valid DatosEditarPersona datos) {
+        
+        Persona personaExistente = personaRepository.getReferenceById(datos.persona_id());
+        
+        personaExistente.setNombre(datos.nombre());
+        personaExistente.setApellido(datos.apellido());
+        
+        personaExistente = personaRepository.save(personaExistente);
+        
+        DatosVerPersona dvp = new DatosVerPersona(personaExistente);
+        
+        return ResponseEntity.ok(dvp);
     }
     
     @PostMapping("/login")

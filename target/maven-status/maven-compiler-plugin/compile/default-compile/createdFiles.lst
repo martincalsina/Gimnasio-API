@@ -35,6 +35,7 @@ com\ar\gimnasio\domain\repeticion\RepeticionesRepository.class
 com\ar\gimnasio\controller\EntrenamientoController.class
 com\ar\gimnasio\domain\set\DatosListadoSet.class
 com\ar\gimnasio\domain\entrenamiento\EntrenamientoRepository.class
+com\ar\gimnasio\domain\persona\DatosEditarPersona.class
 com\ar\gimnasio\domain\rutina\DatosBuscarRutina.class
 com\ar\gimnasio\domain\entrenamiento\DatosCargaEntrenamiento.class
 com\ar\gimnasio\domain\rutina\DatosBuscarRutinaPorPersona.class

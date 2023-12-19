@@ -50,16 +50,6 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author marti
  */
 
-/*
-
-TENGO CASI TODO CONECTADO CON TODO, FALTA:
-
--CONECTAR ESTE REPO CON EL DE rutina
--CONECTA rutina CON PERSONA
--ASEGURARSE DE QUE TODAS LAS RELACIONES SON BIDIRECCIONALES
--PROBAR TODO
-
-*/
 
 @RestController
 @RequestMapping("/entrenamiento")

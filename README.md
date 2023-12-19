@@ -43,6 +43,8 @@ Posicionándonos sobre la carpeta `src/main/java/com/ar/gimnasio` encontraremos 
 
 Por otro lado, en `src/main/resources`, tenemos el archivo de configuración de acceso a la bases de datos `application.properties` y las migraciones hechas con Flyway en `db/migration` con distintas consultas DDL para la creación de las entidades en la misma.
 
+![Estructura del Proyecto](./images/Estructura.png)
+
 ## Base de datos
 
 Localmente se utilizó MariaDB 10.4.28 con XAMPP 3.3.0 y en la nube con MySQL 8.0. Debería resultar indistinta la elección para correr la aplicación.
@@ -61,13 +63,21 @@ Modelo Relacional
 
 Cada una de las entidades están representadas en su correspondiente package `.domain` con una clase con notación `@Entity`, su nombre en la base de datos y anotaciones útiles de Lombok para reducir la cantidad de código y facilitar la legibilidad del mismo. Las relaciones entre las tablas se trataron con anotaciones `@OneToMany` y `@ManyToOne`, dado que todas eran de tipo 1 a N. 
 
-Del lado del `@OneToMany` se creó un atributo con la lista de Entidades con las que ese _One_ está relacionado y se utilizó la notación `@JsonManagedReference`. Del lado `@ManyToOne` se tiene un atributo con la clase que mappea a la Entidad con la que se relaciona el N y se le agregó la notación `@JsonBakcReference`. Con ambas notaciones de Reference se previene que Spring entre en un bucle al intentar serializar una clase al formato JSON.
+Del lado del `@OneToMany` se creó un atributo con la lista de Entidades con las que ese _One_ está relacionado y se utilizó la notación `@JsonManagedReference`. Del lado `@ManyToOne` se tiene un atributo con la clase que mappea a la Entidad con la que se relaciona el N y se le agregó la notación `@JsonBackReference`. Con ambas notaciones de Reference se previene que Spring entre en un bucle al intentar serializar una clase al formato JSON.
+
+![Ejemplo de Entity](./images/EjemploEntity.png)
 
 Aparejadamente, cada entidad tiene una interface `Repository` de Spring Data asociada que permite, con sus métodos y algunos propios declarados, hacer las consultas DML a la base de datos.
 
+![Ejemplo de Repository](./images/EjemploRepository.png)
+
 Para manejar los datos que se esperan recibir en el Body de una Request, o que se espera devolver a partir de una, cada `.domain` tiene una serie de Java Records de nombre `DatosFuncion` (para la función que sea que cumplan) que actúan como DTOs para elegir que información mostrar o recibir de las entidades.
 
+![Ejemplo domain](./images/EjemploDomain.png)
+
 Por cada entidad en base de datos se tiene un Controller en la carpeta de mismo nombre con el path `/entidad` (para el nombre de la entidad) seguido de un nombre representativo de la función que se quiera utilizar y un tipo de Request asociado (ejemplo: `/persona/crear`).
+
+![Ejemplo Controller](./images/EjemploController.png)
 
 Próximamente documentaré en detalle los distintos métodos de los que dispone, sus valores esperados y de salida utilizando Swagger.
 
